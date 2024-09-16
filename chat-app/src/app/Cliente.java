@@ -47,8 +47,22 @@ public class Cliente extends Thread {
     }
 
     public static void readClientInput(Socket client) throws IOException {
-        
         PrintStream output = new PrintStream(client.getOutputStream());
+        String name = "";
+        do {
+            if (name.startsWith("/")) {
+                System.out.println("Nome não pode iniciar com /");
+            }
+            if (name.startsWith("!")) {
+                System.out.println("Nome não pode iniciar com !");
+            }
+            System.out.println("Digite o seu nome: ");
+            name = "!" + SCANNER.nextLine(); // Adicionar ! para identificar no servidor que esta mensagem representa o nome do cliente conectado
+        } while ((name.startsWith("/") || name.startsWith("!")) && SCANNER.hasNextLine());
+
+        output.println(name);
+        System.out.println("Bem-vindo ao sistema de chat!");
+
         while (!closed) {
             String message = SCANNER.nextLine().trim();
             String[] splitMessage = message.split(" ");
