@@ -1,4 +1,5 @@
 package app;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -6,7 +7,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Cliente extends Thread {
-    
+
     private final Socket socket;
     private static final Scanner SCANNER = new Scanner(System.in);
     private static boolean closed = false;
@@ -26,7 +27,7 @@ public class Cliente extends Thread {
                 String[] splitMessage = message.split(" ");
                 String action = splitMessage[0];
                 if (action.equalsIgnoreCase("/send")) {
-                    String inputType  = splitMessage[1];
+                    String inputType = splitMessage[1];
                     String targetUser = splitMessage[2];
 
                     if (inputType.equalsIgnoreCase("file")) {
@@ -57,7 +58,8 @@ public class Cliente extends Thread {
                 System.out.println("Nome não pode iniciar com !");
             }
             System.out.println("Digite o seu nome: ");
-            name = "!" + SCANNER.nextLine(); // Adicionar ! para identificar no servidor que esta mensagem representa o nome do cliente conectado
+            name = "!" + SCANNER.nextLine(); // Adicionar ! para identificar no servidor que esta mensagem representa o
+                                             // nome do cliente conectado
         } while ((name.startsWith("/") || name.startsWith("!")) && SCANNER.hasNextLine());
 
         output.println(name);
@@ -74,8 +76,8 @@ public class Cliente extends Thread {
                 output.close();
                 client.close();
             } else if (action.equalsIgnoreCase("/send")) {
-                
-                String inputType  = splitMessage[1];
+
+                String inputType = splitMessage[1];
                 String targetUser = splitMessage[2];
 
                 if (inputType.equalsIgnoreCase("file")) {
@@ -90,18 +92,25 @@ public class Cliente extends Thread {
             } else {
                 System.out.println("Comando não existente!");
             }
-            
+
         }
     }
 
     public static void main(String[] args) throws UnknownHostException, IOException {
-        Socket client = new Socket("127.0.0.1", 12345);
-        Cliente serverInput = new Cliente(client);
-        
-        // Essa Thread aqui é responsável por receber os dados intermediados pelo servidor
-        serverInput.start();
-        readClientInput(client);
+        try {
+            Socket client = new Socket("127.0.0.1", 12345);
+            Cliente serverInput = new Cliente(client);
 
-        SCANNER.close();
+            // Essa Thread aqui é responsável por receber os dados intermediados pelo
+            // servidor
+            serverInput.start();
+            readClientInput(client);
+
+            SCANNER.close();
+
+        } catch (Exception e) {
+            System.out.println("Cliente não conectado");
+        }
+
     }
 }
